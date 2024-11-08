@@ -4,10 +4,290 @@ import {Day, Inject, Month,WorkWeek, Agenda , ScheduleComponent, ViewDirective, 
 import {registerLicense} from '@syncfusion/ej2-base'
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWGBCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH9feHRWQ2ZcVk10WkY=');
 
-import { SignupFormDemo } from './signup'
 import {L10n} from '@syncfusion/ej2-base'
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
+import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
+import { DateTimePickerComponent } from "@syncfusion/ej2-react-calendars";
+import { HoverBorderGradient } from './button';
+
+export function SignupFormDemo() {
+  const [formValues, setFormValues] = useState(Array(14).fill("")); // Array per 12 campi di input
+
+  const handleInputChange = (index:any, value:any, type:any) => {
+    const updatedValues = [...formValues];
+    updatedValues[index] = type === "number" ? (isNaN(parseInt(value)) ? 0 : parseInt(value, 10)) : value;
+    setFormValues(updatedValues);
+  };
+
+  const handleSubmit = async (e:any) => {
+    e.preventDefault();
+    console.log("Dati del form:", formValues);
+    const appuntamento = {
+      subject: formValues[0],
+      cognome: formValues[1],
+      cellulare: formValues[2],
+      servizi: formValues[3],
+      annos: formValues[4],
+      annoe: formValues[5],
+      meses: formValues[6],
+      mesee: formValues[7],
+      gionos: formValues[8],
+      giornoe: formValues[9],
+      oras: formValues[10],
+      orae: formValues[11],
+      minutos: formValues[12],
+      minutoe: formValues[13]
+    };
+
+    try {
+      const response = await fetch('/api/add-pet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appuntamento),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erroreeee");
+      }
+      
+      const data = await response.json();
+      console.log(data.message);
+      alert('Salvato!'); // Mostra il messaggio di successo
+    } catch (error) {
+      console.error("Errore nel salvataggio dell'appuntamento:", error);
+    }
+
+  };
+  const handleCancel = async (e:any) => {
+    e.preventDefault();
+    console.log("Dati del form:", formValues);
+    const appuntamento = {
+      subject: formValues[0],
+      cognome: formValues[1],
+      cellulare: formValues[2],
+      servizi: formValues[3],
+      annos: formValues[4],
+      annoe: formValues[5],
+      meses: formValues[6],
+      mesee: formValues[7],
+      gionos: formValues[8],
+      giornoe: formValues[9],
+      oras: formValues[10],
+      orae: formValues[11],
+      minutos: formValues[12],
+      minutoe: formValues[13]
+    };
+
+    try {
+      const response = await fetch('/api/add-pet', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appuntamento),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erroreeee");
+      }
+      
+      const data = await response.json();
+      console.log(data.message);
+      alert('Eliminato!'); // Mostra il messaggio di successo
+    } catch (error) {
+      console.error("Errore nel salvataggio dell'appuntamento:", error);
+      alert('Appuntamento non trovato!');
+    }
+
+  };
+
+  return (
+    <div className="max-w-md w-[400px] rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black relative ">
+      
+        <div className="flex flex-col space-y-2 md:space-y-0 md:space-x-2 mb-20">
+          <LabelInputContainer>
+            <Label htmlFor="firstname" className="e-textlabel">Nome</Label>
+            <Input
+              type="text"
+              style={{ width: "100%" }}
+              className="e-field"
+              onChange={(e) => handleInputChange(0, e.target.value, 'text')}
+            />
+          </LabelInputContainer>
+          <LabelInputContainer>
+            <Label htmlFor="lastname" className="e-textlabel">Cognome</Label>
+            <Input
+              type="text"
+              style={{ width: "100%" }}
+              className="e-field"
+              onChange={(e) => handleInputChange(1, e.target.value,'text')}
+            />
+          </LabelInputContainer>
+          <LabelInputContainer>
+            <Label htmlFor="cellulare" className="e-textlabel">Cellulare</Label>
+            <Input
+              type="text"
+              style={{ width: "100%" }}
+              className="e-field"
+              onChange={(e) => handleInputChange(2, e.target.value,'text')}
+            />
+          </LabelInputContainer>
+          <LabelInputContainer>
+            <Label htmlFor="servizio" className="e-textlabel">Servizio</Label>
+            <Input
+              type="text"
+              style={{ width: "100%" }}
+              className="e-field"
+              onChange={(e) => handleInputChange(3, e.target.value,'text')}
+            />
+          </LabelInputContainer>
+          
+          {/* Campi successivi con layout a righe */}
+          {/* Anno Inizio e Fine */}
+          <div className="flex flex-row">
+            <LabelInputContainer>
+              <Label htmlFor="anno-inizio" className="e-textlabel">Anno Inizio</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(4, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="anno-fine" className="e-textlabel">Anno Fine</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(5, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+          </div>
+
+          {/* Mese Inizio e Fine */}
+          <div className="flex flex-row">
+            <LabelInputContainer>
+              <Label htmlFor="mese-inizio" className="e-textlabel">Mese Inizio</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(6, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="mese-fine" className="e-textlabel">Mese Fine</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(7, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+          </div>
+
+          {/* Giorno Inizio e Fine */}
+          <div className="flex flex-row">
+            <LabelInputContainer>
+              <Label htmlFor="giorno-inizio" className="e-textlabel">Giorno Inizio</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(8, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="giorno-fine" className="e-textlabel">Giorno Fine</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(9, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+          </div>
+          <div className="flex flex-row">
+            <LabelInputContainer>
+              <Label htmlFor="giorno-inizio" className="e-textlabel">Ora Inizio</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(10, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="giorno-fine" className="e-textlabel">Ora Fine</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(11, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+          </div>
+          {/* Minuto Inizio e Fine */}
+          <div className="flex flex-row">
+            <LabelInputContainer>
+              <Label htmlFor="minuto-inizio" className="e-textlabel">Minuto Inizio</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(12, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+            <LabelInputContainer>
+              <Label htmlFor="minuto-fine" className="e-textlabel">Minuto Fine</Label>
+              <Input
+                type="number"
+                style={{ width: "100%" }}
+                className="e-field"
+                onChange={(e) => handleInputChange(13, e.target.value,'number')}
+              />
+            </LabelInputContainer>
+          </div>
+
+          <LabelInputContainer className='absolute -right-[300px] bottom-2'>
+        <HoverBorderGradient containerClassName="rounded-full"
+        as="button"
+        className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2" onClick={handleSubmit}
+        >
+          <span>Salva</span>
+        </HoverBorderGradient>
+        </LabelInputContainer>
+        <LabelInputContainer className='absolute -right-[200px] bottom-2'>
+        <HoverBorderGradient containerClassName="rounded-full"
+        as="button"
+        className="dark:bg-black bg-white text-black dark:text-white flex items-center space-x-2" onClick={handleCancel}
+        >
+          <span>Cancella</span>
+        </HoverBorderGradient>
+        </LabelInputContainer>
+        </div>
+      
+    </div>
+  );
+}
+const LabelInputContainer = ({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div className={cn("flex flex-col space-y-2 w-full", className)}>
+      {children}
+    </div>
+  );
+};
 
 
 interface Appuntamento {
@@ -32,38 +312,37 @@ interface Appuntamento {
 }
 
 
-export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotCount: number } }) =>{
+export const Calendario = () =>{
   
   const [appuntamenti, setAppuntamenti] = useState<Appuntamento[]>([]);
-
+/*
   useEffect(() => {
     const fetchAppuntamenti = async () => {
       try {
-        const response = await fetch('/api');
+        const response = await fetch('/api/add-pet');
         const data = await response.json();
-  
+        console.log(data.rows)
         // Verifica se i dati sono un array
-        if (Array.isArray(data)) {
+        
           const convertedData = data.map((appuntamento: any) => ({
             ...appuntamento,
-            StartTime: new Date(appuntamento.AnnoS, appuntamento.MeseS-1 , appuntamento.GiornoS, appuntamento.OraS, appuntamento.MinutoS),
-            EndTime: new Date(appuntamento.AnnoE, appuntamento.MeseE-1 , appuntamento.GiornoE, appuntamento.OraE, appuntamento.MinutoE),
-          }));
-  
+            Subject: appuntamento.subject,
+            StartTime: new Date(appuntamento.annos, appuntamento.meses-1 , appuntamento.gionos, appuntamento.oras, appuntamento.minutos),
+            EndTime: new Date(appuntamento.annoe, appuntamento.mesee-1 , appuntamento.giornoe, appuntamento.orae, appuntamento.minutoe),
+          }))
+          console.log(convertedData)
           // Imposta gli appuntamenti convertiti
           setAppuntamenti(convertedData);
-        } else {
-          console.error('Errore: "data" non è un array valido.');
-        }
+        
       } catch (error) {
         console.error('Errore nel recuperare i dati:', error);
       }
     };
   
     fetchAppuntamenti();
-  }, []);
+  }, []);*/
 
-  const eventTemplate = (props: { [key: string]: Object }): JSX.Element => {
+  /*const eventTemplate = (props: { [key: string]: Object }): JSX.Element => {
     return (
       <div className="template-wrap">
         <div className="subject">{props.Subject}</div>
@@ -73,18 +352,18 @@ export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotC
         </div>
       </div>
     );
-  };
-
+  };*/
+/*
   const localData: EventSettingsModel= {
     dataSource: appuntamenti
   }
-
+*/
   // Ritorna null o un messaggio mentre i dati vengono caricati
   
   
   
 
-  
+  /*
   const editorTable = (props: any):JSX.Element =>{
     return (
       <SignupFormDemo ></SignupFormDemo>
@@ -102,7 +381,7 @@ export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotC
     </div>
     )
   }
-  
+  */
   
   L10n.load({
     'us-US':{
@@ -130,6 +409,7 @@ export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotC
       }
     }
   })
+  /*
   const onActionBegin = async (args: any) => {
     if (args.requestType === 'eventCreate') {
       const newEvent = args.data[0]; // Prendi il primo evento dalla richiesta
@@ -162,7 +442,7 @@ export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotC
         CellulareOld:newEvent.Cellulare || '',
       };
       try {
-        const response = await fetch('http://localhost:3000/api', {
+        const response = await fetch('/api', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -305,20 +585,23 @@ export const Calendario = ({ timeScale }: { timeScale: { interval: number; slotC
       }
     }
   };
-
+*/
   function onPopupOpen1(args:any) {
     if (args.type === 'QuickInfo' || args.type === 'Editor') {
         args.cancel = true; // Annulla l'apertura del quickPopup e dell'editor
     }
 }
   return (
-    <ScheduleComponent  currentView='WorkWeek' width='100%' height='100%' eventSettings={localData} editorTemplate={editorTable.bind(this)}  editorHeaderTemplate={editorHeader.bind(this)} timeScale={timeScale} 
+      <div className='overflow-x-hidden w-[400px]'>
+      <SignupFormDemo />
+    {/*<ScheduleComponent  currentView='WorkWeek' width='100%' height='100%' eventSettings={localData}  
     popupOpen={onPopupOpen1}>
       <ViewsDirective>
         <ViewDirective option='WorkWeek' startHour='09:00' endHour='22:00' workDays={[1, 2, 3, 4, 5, 6]} ></ViewDirective>
         </ViewsDirective>
       <Inject services={[ Day,Week, Month ,WorkWeek,Agenda,TimelineViews, TimelineMonth]}/>
-    </ScheduleComponent>
+    </ScheduleComponent>*/}
+    </div>
   )
 }
 export default Calendario
